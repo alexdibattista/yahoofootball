@@ -1,3 +1,7 @@
+/*
+ * @flow
+ */
+
 const credentials = require('./credentials');
 const puppeteer = require('puppeteer');
 
@@ -8,7 +12,7 @@ const PASSWORD_SELECTOR = '#login-passwd';
 const PASSWORD_SUBMIT_SELECTOR = '#login-signin';
 const LENGTH_OF_TABLE = 'tr';
 
-const LIST_USERNAME_SELECTOR = 'tr:nth-child(INDEX)';
+let LIST_PLAYER_SELECTOR = '.Table > tbody > tr:nth-child(INDEX) > .player > div > .Grid-bind-end > .ysf-player-name > .name';
 
 async function run() {
   const yahooLogin = 'https://login.yahoo.com';
@@ -40,23 +44,19 @@ async function run() {
 
   console.log(`number of rows: ${tableLength}`);
 
-  for (let i = 1; i < tableLength; i++) {
-    let usernameSelector = LIST_USERNAME_SELECTOR.replace("INDEX", i);
 
-    let username = await page.evaluate((sel) => {
-        const table = document.querySelector('.Table').getElementsByTagName('tbody')[0];
-        return table.querySelector(sel);
-      }, usernameSelector);
+  for (let i = 1; i <= tableLength; i++) {
+    let playerNameSelector = LIST_PLAYER_SELECTOR.replace("INDEX", i);
 
-    console.log(username);
+    let playerName = await page.evaluate((sel) => {
+      return document.querySelector(sel).innerHTML;
+    }, playerNameSelector);
+
+    console.log(playerName);
   }
 
-  // let player = await page.evaluate(() => {
-  //   const table = document.querySelector('.Table').innerHTML;
-  //   return table;
-  // });
-  //
-  // console.log(player);
+
+
 
   browser.close();
 
